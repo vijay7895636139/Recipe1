@@ -19,7 +19,7 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
 </head>
 <body>
 
-<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe"*/-->
+<!--/*@thymesVar id="recipe" type="com.vijay.Recipe.Model.Recipe"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -28,7 +28,7 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-md-3">
-                                <h1 class="panel-title">Recipe Description Here!</h1>
+                                <h1 class="panel-title" th:text="${recipe.getDescription()}">Recipe Description Here!</h1>
                             </div>
 
                             <div class="col-md-1">
@@ -43,10 +43,9 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                                 <h5>Categories:</h5>
                             </div>
                             <div class="col-md-3">
-                                <ul>
-                                    <li>cat one</li>
-                                    <li>cat two</li>
-                                    <li>cat three</li>
+                                <ul >
+                                <!-- <li th:text="${recipe.category.getDescription()}">cat one</li> wrong way to get categories --> 
+                                     <li th:each="categories : ${recipe.category}" th:text="${categories.getDescription()}">cat one</li> 
                                 </ul>
                             </div>
                             <div class="col-md-6">
@@ -57,16 +56,16 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                         </div>
                         <div class="row">
                             <div class="col-md-3">
-                                <h5>Prep Time:</h5>
+                                <h5 >Prep Time:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p>30 min</p>
+                                <p th:text="${recipe.getPrepTime} + ' min'">30 min</p>
                             </div>
                             <div class="col-md-3">
                                 <h5>Difficulty:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p >Easy</p>
+                                <p th:text="${recipe.getDifficulty()}">Easy</p>
                             </div>
                         </div>
                         <div class="row">
@@ -74,13 +73,13 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                                 <h5>Cooktime:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p>30 min</p>
+                                <p th:text="${recipe.getCookTime} + ' min'">30 min</p>
                             </div>
                             <div class="col-md-3">
                                 <h5>Servings:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p>4</p>
+                                <p th:text="${recipe.getServing()}">4</p>
                             </div>
                         </div>
                         <div class="row">
@@ -88,13 +87,13 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                                 <h5>Source:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p>30 min</p>
+                                <p th:text="${recipe.getSource()}">30 min</p>
                             </div>
                             <div class="col-md-3">
                                 <h5>URL:</h5>
                             </div>
                             <div class="col-md-3">
-                                <p>>www.viojay.com</a></p>
+                                <p th:text="${recipe.getUrl}">www.viojay.com</a></p>
                             </div>
                         </div>
                     </div>
@@ -106,7 +105,7 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                                 <h1 class="panel-title">Ingredients</h1>
                             </div>
                             <div class="col-md-1">
-                                <a class="btn btn-default" href="#">View</a>
+                                <a class="btn btn-default" th:href="@{'/recipe/'+${recipe.id}+'/list'}">View</a>
                             </div>
                         </div>
                     </div>
@@ -114,10 +113,10 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                         <div class="row">
                             <div class="col-md-12">
                                 <ul>
-                                    <li>1 Teaspoon of chai</li>
-                                    <li >1 Teaspoon of chocolate</li>
-                                    <li>1 Teaspoon of Sugar
-                                    </li>
+                                    <li th:each="ingredients : ${recipe.ingredient}" 
+                                    th:text="${(ingredients.getAmount() +
+                                    ' '+ ingredients.uom.getDescription() + 
+                                    ' - '+ingredients.getDescription())}">1 Teaspoon of chai</li>
                                 </ul>
                             </div>
                         </div>
@@ -130,7 +129,7 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <p >Lorem ipsum dolor sit amet, consectetuer adipiscing
+                                <p th:text="${recipe.getDirections}" >Lorem ipsum dolor sit amet, consectetuer adipiscing
                                     elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
                                     et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies
                                     nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede
@@ -154,7 +153,7 @@ integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <p>Lorem ipsum dolor sit amet, consectetuer
+                                <p  th:text="${recipe.notes.getRecipeNotes}">Lorem ipsum dolor sit amet, consectetuer
                                     adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
                                     penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis,
                                     ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.

@@ -5,8 +5,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
+import com.vijay.Recipe.commands.RecipeCommand;
+import com.vijay.Recipe.converters.RecipeCommandToRecipe;
+import com.vijay.Recipe.converters.RecipeToRecipeCommand;
 import com.vijay.Recipe.model.Recipe;
 import com.vijay.Recipe.repositories.RecipeRepository;
 
@@ -17,10 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 public class RecipeServiceImpl implements RecipeService{
 	
 	private final RecipeRepository recipeRepository;
+	private final RecipeCommandToRecipe recipeCommandToRecipe;
+	private final RecipeToRecipeCommand recipeToRecipeCommand;
 
-	public RecipeServiceImpl(RecipeRepository recipeRepository) {
+	public RecipeServiceImpl(RecipeRepository recipeRepository, RecipeToRecipeCommand recipeToRecipeCommand, RecipeCommandToRecipe recipeCommandToRecipe) {
 		super();
 		this.recipeRepository = recipeRepository;
+		this.recipeCommandToRecipe = recipeCommandToRecipe;
+		this.recipeToRecipeCommand = recipeToRecipeCommand;
 	}
 
 	@Override
@@ -42,6 +51,34 @@ public class RecipeServiceImpl implements RecipeService{
 		}
 		return recipeid.get();
 	}
+	
+	@Override
+	@Transactional
+	public RecipeCommand findCommandById(Long l)
+	{
+		return recipeToRecipeCommand.convert(findById(l));
+	}
+	
+
+	@Override
+	@Transactional
+	public RecipeCommand saveRecipeCommand(RecipeCommand command) {
+		
+		Recipe detachedRecipe=recipeCommandToRecipe.convert(command);
+		Recipe savedRecipe=recipeRepository.save(detachedRecipe);
+		
+		
+		
+		return recipeToRecipeCommand.convert(savedRecipe);
+	}
+
+	@Override
+	public void deleteById(Long long1) {
+		recipeRepository. deleteById(long1);
+		
+	}
+
+
 	
 	
 	
